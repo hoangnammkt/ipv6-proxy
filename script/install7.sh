@@ -107,6 +107,7 @@ FPORT_SOCKS=20000
 LPORT_SOCKS=12000
 
 gen_data >$WORKDIR/data.txt
+gen_data_socks >$WORKDIR/portdata.txt
 gen_iptables >$WORKDIR/boot_iptables.sh
 gen_ifconfig >$WORKDIR/boot_ifconfig.sh
 chmod +x boot_*.sh /etc/rc.local
