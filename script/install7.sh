@@ -35,11 +35,12 @@ setgid 65535
 setuid 65535
 flush
 auth strong
+
 users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
-$(awk -F "/" '{print "auth iponly strong\n" \
+
+$(awk -F "/" '{print "auth strong\n" \
 "allow " $1 "\n" \
-"proxy -6 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
-"socks -s0 -6 -p" $6 " -i" $3 " -e"$5"\n" \
+"socks -s0 -6 -p" $4 " -i" $3 " -e"$5"\n" \
 "flush\n"}' ${WORKDATA})
 EOF
 }
@@ -60,23 +61,15 @@ upload_proxy() {
     echo "Password: ${PASS}"
 
 }
-
 gen_data() {
     seq $FIRST_PORT $LAST_PORT | while read port; do
-        echo "$(random)/$(random)/$IP4/$port/$(gen64 $IP6)/$FPORT_SOCKS"
-        let FPORT_SOCKS+=1
-    done
-}
-
-gen_data_socks() {
-    seq $FIRST_PORT $LPORT_SOCKS | while read port; do
-        echo $port
+        echo "usr$(random)/pass$(random)/$IP4/$port/$(gen64 $IP6)"
     done
 }
 
 gen_iptables() {
     cat <<EOF
-    $(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT"}' ${PORTDATA}) 
+    $(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT"}' ${WORKDATA}) 
 EOF
 }
 
@@ -93,7 +86,6 @@ install_3proxy
 echo "working folder = /home/proxy-installer"
 WORKDIR="/home/proxy-installer"
 WORKDATA="${WORKDIR}/data.txt"
-PORTDATA="${WORKDIR}/portdata.txt"
 mkdir $WORKDIR && cd $_
 
 IP4=$(curl -4 -s icanhazip.com)
@@ -101,13 +93,13 @@ IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
 
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
+echo "How many proxy do you want to create? Example 500"
+read COUNT
+
 FIRST_PORT=10000
-LAST_PORT=11000
-FPORT_SOCKS=20000
-LPORT_SOCKS=12000
+LAST_PORT=$(($FIRST_PORT + $COUNT))
 
 gen_data >$WORKDIR/data.txt
-gen_data_socks >$WORKDIR/portdata.txt
 gen_iptables >$WORKDIR/boot_iptables.sh
 gen_ifconfig >$WORKDIR/boot_ifconfig.sh
 chmod +x boot_*.sh /etc/rc.local
