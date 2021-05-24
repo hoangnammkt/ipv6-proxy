@@ -113,7 +113,7 @@ echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 FIRST_PORT=10000
 LAST_PORT=11000
 FPORT_SOCKS=20000
-LPORT_SOCKS=12000
+LPORT_SOCKS=21000
 
 gen_data >$WORKDIR/data.txt
 gen_data_socks >$WORKDIR/portdata.txt
