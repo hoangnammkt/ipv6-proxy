@@ -113,7 +113,7 @@ echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 FIRST_PORT=10000
 LAST_PORT=11000
 FPORT_SOCKS=20000
-LPORT_SOCKS=12000
+LPORT_SOCKS=21000
 
 gen_data >$WORKDIR/data.txt
 gen_data_socks >$WORKDIR/portdata.txt
@@ -129,12 +129,10 @@ systemctl start NetworkManager.service
 ifup eth0
 bash ${WORKDIR}/boot_iptables.sh
 bash ${WORKDIR}/boot_ifconfig.sh
-ulimit -c unlimited
+ulimit -n 65535
 /usr/local/etc/3proxy/bin/3proxy /usr/local/etc/3proxy/3proxy.cfg &
 EOF
 
 bash /etc/rc.local
 
 gen_proxy_file_for_user
-service network restart
-reboot
