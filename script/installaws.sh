@@ -32,9 +32,8 @@ install_3proxy() {
     echo "net.ipv6.conf.all.proxy_ndp=1" >> /etc/sysctl.conf
     echo "net.ipv6.conf.default.forwarding=1" >> /etc/sysctl.conf
     echo "net.ipv6.conf.all.forwarding=1" >> /etc/sysctl.conf
-    echo "net.ipv6.ip_nonlocal_bind = 1" >> /etc/sysctl.conf
+    echo "net.ipv6.ip_nonlocal_bind=1" >> /etc/sysctl.conf
     sysctl -p
-
     cd $WORKDIR
 }
 
@@ -101,8 +100,11 @@ echo "working folder = /home/proxy-installer"
 WORKDIR="/home/proxy-installer"
 WORKDATA="${WORKDIR}/data.txt"
 PORTDATA="${WORKDIR}/portdata.txt"
+
+echo "create working folder OK"
 mkdir $WORKDIR && cd $_
 
+echo "GET IP"
 IP4=$(curl -4 -s icanhazip.com)
 IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
 
