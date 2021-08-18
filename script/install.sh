@@ -5,6 +5,8 @@ random() {
 }
 
 array=(1 2 3 4 5 6 7 8 9 0 a b c d e f)
+main_interface=$(ip route get 8.8.8.8 | awk -- '{printf $5}')
+
 gen64() {
     ip64() {
         echo "${array[$RANDOM % 16]}${array[$RANDOM % 16]}${array[$RANDOM % 16]}${array[$RANDOM % 16]}"
@@ -28,7 +30,7 @@ install_3proxy() {
 #    systemctl enable 3proxy
     echo "* hard nofile 999999" >>  /etc/security/limits.conf
     echo "* soft nofile 999999" >>  /etc/security/limits.conf
-    echo "net.ipv6.conf.ens3.proxy_ndp=1" >> /etc/sysctl.conf
+    echo "net.ipv6.conf.$main_interface.proxy_ndp=1" >> /etc/sysctl.conf
     echo "net.ipv6.conf.all.proxy_ndp=1" >> /etc/sysctl.conf
     echo "net.ipv6.conf.default.forwarding=1" >> /etc/sysctl.conf
     echo "net.ipv6.conf.all.forwarding=1" >> /etc/sysctl.conf
@@ -43,7 +45,7 @@ install_3proxy() {
 gen_3proxy() {
     cat <<EOF
 daemon
-maxconn 20000
+maxconn 2000
 nserver 1.1.1.1
 nserver 8.8.4.4
 nserver 2001:4860:4860::8888
@@ -91,7 +93,7 @@ EOF
 
 gen_ifconfig() {
     cat <<EOF
-$(awk -F "/" '{print "ifconfig ens3 inet6 add " $5 "/64"}' ${WORKDATA})
+$(awk -F "/" '{print "ifconfig '$main_interface' inet6 add " $5 "/64"}' ${WORKDATA})
 EOF
 }
 echo "installing apps"
@@ -119,14 +121,14 @@ gen_data >$WORKDIR/data.txt
 gen_data_socks >$WORKDIR/portdata.txt
 gen_iptables >$WORKDIR/boot_iptables.sh
 gen_ifconfig >$WORKDIR/boot_ifconfig.sh
+echo NM_CONTROLLED="no" >> /etc/sysconfig/network-scripts/ifcfg-${main_interface}
 chmod +x $WORKDIR/boot_*.sh /etc/rc.local
 
 gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
 
 cat >>/etc/rc.local <<EOF
-chmod +x /etc/rc.d/rc.local
 systemctl start NetworkManager.service
-ifup ens3
+# ifup ${main_interface}
 bash ${WORKDIR}/boot_iptables.sh
 bash ${WORKDIR}/boot_ifconfig.sh
 ulimit -n 65535
