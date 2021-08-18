@@ -54,10 +54,10 @@ setgid 65535
 setuid 65535
 stacksize 6291456 
 flush
-auth strong
+auth strong iponly
 users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
 $(awk -F "/" '{print "auth iponly strong\n" \
-"allow " $1 "\n" \
+"allow " $1 " * 14.179.38.17\n" \
 "proxy -6 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
 "socks -s0 -6 -p" $6 " -i" $3 " -e"$5"\n" \
 "flush\n"}' ${WORKDATA})
