@@ -23,7 +23,7 @@ install_3proxy() {
     make -f Makefile.Linux
     mkdir -p /usr/local/etc/3proxy/{bin,logs,stat}
     mv /3proxy/3proxy-0.9.3/bin/3proxy /usr/local/etc/3proxy/bin/
-    wget https://raw.githubusercontent.com/hoangnammkt/ipv6-proxy/main/script/3proxy.service --output-document=/3proxy/3proxy-0.9.3/scripts/3proxy.service2
+    wget https://raw.githubusercontent.com/thuongtin/ipv4-ipv6-proxy/master/scripts/3proxy.service-Centos8 --output-document=/3proxy/3proxy-0.9.3/scripts/3proxy.service2
     cp /3proxy/3proxy-0.9.3/scripts/3proxy.service2 /usr/lib/systemd/system/3proxy.service
     systemctl link /usr/lib/systemd/system/3proxy.service
     systemctl daemon-reload
@@ -56,12 +56,16 @@ setgid 65535
 setuid 65535
 stacksize 6291456 
 flush
-auth strong iponly
+auth strong
+monitor /home/ipsallowlist
+
 users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
+
 $(awk -F "/" '{print "auth iponly strong\n" \
-"allow " $1 " * 14.179.38.17\n" \
+"allow * $/home/ipsallowlist\n" \
+"allow " $1 "\n" \
 "proxy -6 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
-"socks -s0 -6 -p" $6 " -i" $3 " -e"$5"\n" \
+"socks -s0 -6 -p" (expr $4+10000) " -i" $3 " -e"$5"\n" \
 "flush\n"}' ${WORKDATA})
 EOF
 }
@@ -74,22 +78,16 @@ EOF
 
 gen_data() {
     seq $FIRST_PORT $LAST_PORT | while read port; do
-        echo "$(random)/$(random)/$IP4/$port/$(gen64 $IP6)/$FPORT_SOCKS"
-        let FPORT_SOCKS+=1
-    done
-}
-
-gen_data_socks() {
-    seq $FIRST_PORT $LPORT_SOCKS | while read port; do
-        echo $port
+        echo "$(random)/$(random)/$IP4/$port/$(gen64 $IP6)"
     done
 }
 
 gen_iptables() {
     cat <<EOF
-    $(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $1 "  -m state --state NEW -j ACCEPT"}' ${PORTDATA}) 
+    $(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT\niptables -I INPUT -p tcp --dport " (expr $4+10000) "  -m state --state NEW -j ACCEPT"}' ${WORKDATA}) 
 EOF
 }
+
 
 gen_ifconfig() {
     cat <<EOF
@@ -104,8 +102,9 @@ install_3proxy
 echo "working folder = /home/proxy-installer"
 WORKDIR="/home/proxy-installer"
 WORKDATA="${WORKDIR}/data.txt"
-PORTDATA="${WORKDIR}/portdata.txt"
 mkdir $WORKDIR && cd $_
+
+echo "123.28.243.72" >/home/ipsallowlist
 
 IP4=$(curl -4 -s icanhazip.com)
 IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
@@ -113,12 +112,9 @@ IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
 FIRST_PORT=10000
-LAST_PORT=11000
-FPORT_SOCKS=20000
-LPORT_SOCKS=21000
+LAST_PORT=10200
 
 gen_data >$WORKDIR/data.txt
-gen_data_socks >$WORKDIR/portdata.txt
 gen_iptables >$WORKDIR/boot_iptables.sh
 gen_ifconfig >$WORKDIR/boot_ifconfig.sh
 echo NM_CONTROLLED="no" >> /etc/sysconfig/network-scripts/ifcfg-${main_interface}
