@@ -104,7 +104,7 @@ WORKDIR="/home/proxy-installer"
 WORKDATA="${WORKDIR}/data.txt"
 mkdir $WORKDIR && cd $_
 
-echo "123.28.243.72" >/home/ipsallowlist
+echo "113.169.138.202" >/home/ipsallowlist
 
 IP4=$(curl -4 -s icanhazip.com)
 IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
