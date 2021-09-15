@@ -47,9 +47,9 @@ gen_3proxy() {
 daemon
 maxconn 2000
 nserver 1.1.1.1
-nserver 8.8.4.4
-nserver 2001:4860:4860::8888
-nserver 2001:4860:4860::8844
+nserver 1.0.0.1
+nserver 2606:4700:4700::1111
+nserver 2606:4700:4700::1111
 nscache 65536
 timeouts 1 5 30 60 180 1800 15 60
 setgid 65535
