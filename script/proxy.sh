@@ -64,9 +64,8 @@ users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
 $(awk -F "/" '{print "auth iponly strong\n" \
 "allow * $/home/ipsallowlist\n" \
 "allow " $1 "\n" \
-"fakeresolve\n" \
-"socks -s0 -p" $4 " -i" $3 "\n"\
-"parent 25 connect+ 154.13.201.44 29842 nvuccp JhP6FC2R\n" \
+"proxy -6 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
+"socks -s0 -6 -p" (expr $4+10000) " -i" $3 " -e"$5"\n" \
 "flush\n"}' ${WORKDATA})
 EOF
 }
@@ -85,7 +84,7 @@ gen_data() {
 
 gen_iptables() {
     cat <<EOF
-    $(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT"}' ${WORKDATA}) 
+    $(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT\niptables -I INPUT -p tcp --dport " (expr $4+10000) "  -m state --state NEW -j ACCEPT"}' ${WORKDATA}) 
 EOF
 }
 
@@ -105,7 +104,7 @@ WORKDIR="/home/proxy-installer"
 WORKDATA="${WORKDIR}/data.txt"
 mkdir $WORKDIR && cd $_
 
-echo "115.72.18.53" >/home/ipsallowlist
+echo "113.169.138.202" >/home/ipsallowlist
 
 IP4=$(curl -4 -s icanhazip.com)
 IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
@@ -113,7 +112,7 @@ IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
 FIRST_PORT=10000
-LAST_PORT=10001
+LAST_PORT=10200
 
 gen_data >$WORKDIR/data.txt
 gen_iptables >$WORKDIR/boot_iptables.sh
