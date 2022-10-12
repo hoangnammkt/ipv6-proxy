@@ -62,8 +62,10 @@ monitor /home/ipsallowlist
 users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
 
 $(awk -F "/" '{print "auth iponly strong\n" \
+"allow * $/home/ipsallowlist\n" \
 "allow " $1 "\n" \
 "fakeresolve\n" \
+"socks -s0 -p" $4 " -i" $3 "\n"\
 "parent 25 connect+ 154.13.201.44 29842 nvuccp JhP6FC2R\n" \
 "parent 25 connect+ 154.13.205.41 29842 nvuccp JhP6FC2R\n" \
 "parent 25 connect+ 154.13.206.128 29842 nvuccp JhP6FC2R\n" \
@@ -104,7 +106,6 @@ $(awk -F "/" '{print "auth iponly strong\n" \
 "parent 25 connect+ 45.146.119.200 29842 eike b3Wpgy0f \n" \
 "parent 25 connect+ 45.146.119.234 29842 eike b3Wpgy0f \n" \
 "parent 25 connect+ 23.227.77.233 29842 eike b3Wpgy0f \n" \
-"socks -s0 -p" $4 " -i" $3 "\n"\
 "flush\n"}' ${WORKDATA})
 EOF
 }
@@ -143,7 +144,7 @@ WORKDIR="/home/proxy-installer"
 WORKDATA="${WORKDIR}/data.txt"
 mkdir $WORKDIR && cd $_
 
-echo "113.169.138.202" >/home/ipsallowlist
+echo "115.72.18.53" >/home/ipsallowlist
 
 IP4=$(curl -4 -s icanhazip.com)
 IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
