@@ -104,7 +104,7 @@ $(awk -F "/" '{print "auth iponly strong\n" \
 "parent 25 connect+ 45.146.119.200 29842 eike b3Wpgy0f \n" \
 "parent 25 connect+ 45.146.119.234 29842 eike b3Wpgy0f \n" \
 "parent 25 connect+ 23.227.77.233 29842 eike b3Wpgy0f \n" \
-"socks -s0 -p" $4 " -i" $3 \
+"socks -s0 -p" $4 " -i" $3 "\n"\
 "flush\n"}' ${WORKDATA})
 EOF
 }
@@ -123,16 +123,11 @@ gen_data() {
 
 gen_iptables() {
     cat <<EOF
-    $(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT\niptables -I INPUT -p tcp --dport " (expr $4+10000) "  -m state --state NEW -j ACCEPT"}' ${WORKDATA}) 
+    $(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT"}' ${WORKDATA}) 
 EOF
 }
 
 
-gen_ifconfig() {
-    cat <<EOF
-$(awk -F "/" '{print "ifconfig '$main_interface' inet6 add " $5 "/64"}' ${WORKDATA})
-EOF
-}
 echo "installing apps"
 yum -y install gcc net-tools bsdtar zip make >/dev/null
 
@@ -151,11 +146,10 @@ IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
 FIRST_PORT=10000
-LAST_PORT=10200
+LAST_PORT=10001
 
 gen_data >$WORKDIR/data.txt
 gen_iptables >$WORKDIR/boot_iptables.sh
-gen_ifconfig >$WORKDIR/boot_ifconfig.sh
 echo NM_CONTROLLED="no" >> /etc/sysconfig/network-scripts/ifcfg-${main_interface}
 chmod +x $WORKDIR/boot_*.sh /etc/rc.local
 
