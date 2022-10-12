@@ -67,45 +67,6 @@ $(awk -F "/" '{print "auth iponly strong\n" \
 "fakeresolve\n" \
 "socks -s0 -p" $4 " -i" $3 "\n"\
 "parent 25 connect+ 154.13.201.44 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 154.13.205.41 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 154.13.206.128 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 172.102.194.138 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 172.102.194.82 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 172.102.194.94 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 172.241.235.207 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 172.241.235.228 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 172.241.235.59 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 172.241.246.108 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 172.241.246.124 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 172.241.246.251 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 172.241.247.166 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 172.241.247.30 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 172.241.247.57 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 172.98.185.84 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 172.98.185.88 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 206.232.116.184 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 206.232.116.85 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 23.105.3.124 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 23.226.16.208 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 23.226.16.43 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 45.154.141.94 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 206.232.116.189 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 45.154.143.203 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 154.13.204.204 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 45.154.142.87 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 23.105.3.169 29842 nvuccp JhP6FC2R\n" \
-"parent 25 connect+ 23.227.77.233 29842 eike b3Wpgy0f \n" \
-"parent 25 connect+ 23.234.152.22 29842 eike b3Wpgy0f \n" \
-"parent 25 connect+ 23.234.152.49 29842 eike b3Wpgy0f \n" \
-"parent 25 connect+ 23.234.152.72 29842 eike b3Wpgy0f \n" \
-"parent 25 connect+ 8.18.120.17 29842 eike b3Wpgy0f \n" \
-"parent 25 connect+ 8.18.120.86 29842 eike b3Wpgy0f \n" \
-"parent 25 connect+ 8.18.120.92 29842 eike b3Wpgy0f \n" \
-"parent 25 connect+ 45.146.119.10 29842 eike b3Wpgy0f \n" \
-"parent 25 connect+ 45.146.119.186 29842 eike b3Wpgy0f \n" \
-"parent 25 connect+ 45.146.119.200 29842 eike b3Wpgy0f \n" \
-"parent 25 connect+ 45.146.119.234 29842 eike b3Wpgy0f \n" \
-"parent 25 connect+ 23.227.77.233 29842 eike b3Wpgy0f \n" \
 "flush\n"}' ${WORKDATA})
 EOF
 }
